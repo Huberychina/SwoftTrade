@@ -10,19 +10,20 @@
 
 namespace App\Rpc\Service;
 
+use App\Rpc\Lib\TradeInterface;
 use App\Rpc\Lib\UserInterface;
 use Exception;
 use Swoft\Co;
 use Swoft\Rpc\Server\Annotation\Mapping\Service;
 
 /**
- * Class UserService
+ * Class TradeServiceV2
  *
  * @since 2.0
  *
- * @Service()
+ * @Service(version="1.2")
  */
-class UserService implements UserInterface
+class TradeServiceV2 implements TradeInterface
 {
     /**
      * @param int   $id
@@ -33,7 +34,18 @@ class UserService implements UserInterface
      */
     public function getList(int $id, $type, int $count = 10): array
     {
-        return ['name' => ['list']];
+        return [
+            'name' => ['this is trade list'],
+            'v'    => '1.2'
+        ];
+    }
+
+    /**
+     * @return void
+     */
+    public function returnNull(): void
+    {
+        return;
     }
 
     /**
@@ -44,14 +56,6 @@ class UserService implements UserInterface
     public function delete(int $id): bool
     {
         return false;
-    }
-
-    /**
-     * @return void
-     */
-    public function returnNull(): void
-    {
-        return;
     }
 
     /**
@@ -69,7 +73,7 @@ class UserService implements UserInterface
      */
     public function exception(): void
     {
-        throw new Exception('exception version');
+        throw new Exception('exception version2');
     }
 
     /**

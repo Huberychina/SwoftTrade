@@ -7,6 +7,7 @@
  * @contact  group@swoft.org
  * @license  https://github.com/swoft-cloud/swoft/blob/master/LICENSE
  */
+
 use App\Common\DbSelector;
 use App\Process\MonitorProcess;
 use Swoft\Crontab\Process\CrontabProcess;
@@ -31,12 +32,12 @@ return [
     'applicationHandler' => [
         'logFile' => '@runtime/logs/error-%d{Y-m-d}.log',
     ],
-    'logger'            => [
+    'logger'             => [
         'flushRequest' => false,
         'enable'       => false,
         'json'         => false,
     ],
-    'httpServer'        => [
+    'httpServer'         => [
         'class'    => HttpServer::class,
         'port'     => 18306,
         'listener' => [
@@ -51,16 +52,16 @@ return [
         'on'       => [
 //            SwooleEvent::TASK   => bean(SyncTaskListener::class),  // Enable sync task
             SwooleEvent::TASK   => bean(TaskListener::class),  // Enable task must task and finish event
-            SwooleEvent::FINISH => bean(FinishListener::class)
+            SwooleEvent::FINISH => bean(FinishListener::class),
         ],
         /* @see HttpServer::$setting */
-        'setting' => [
+        'setting'  => [
             'task_worker_num'       => 12,
             'task_enable_coroutine' => true,
-            'worker_num'            => 6
-        ]
+            'worker_num'            => 6,
+        ],
     ],
-    'httpDispatcher'    => [
+    'httpDispatcher'     => [
         // Add global http middleware
         'middlewares'      => [
             \App\Http\Middleware\FavIconMiddleware::class,
@@ -70,53 +71,53 @@ return [
             \Swoft\View\Middleware\ViewMiddleware::class,
         ],
         'afterMiddlewares' => [
-            \Swoft\Http\Server\Middleware\ValidatorMiddleware::class
-        ]
+            \Swoft\Http\Server\Middleware\ValidatorMiddleware::class,
+        ],
     ],
-    'db'                => [
+    'db'                 => [
         'class'    => Database::class,
-        'dsn'      => 'mysql:dbname=test;host=127.0.0.1',
+        'dsn'      => 'mysql:dbname=test;host=192.168.2.248:13306',
         'username' => 'root',
-        'password' => 'swoft123456',
-        'charset' => 'utf8mb4',
+        'password' => '123456',
+        'charset'  => 'utf8mb4',
     ],
-    'db2'               => [
-        'class'      => Database::class,
-        'dsn'        => 'mysql:dbname=test2;host=127.0.0.1',
-        'username'   => 'root',
-        'password'   => 'swoft123456',
-//        'dbSelector' => bean(DbSelector::class)
-    ],
-    'db2.pool' => [
-        'class'    => Pool::class,
-        'database' => bean('db2'),
-    ],
-    'db3'               => [
+    'db2'                => [
         'class'    => Database::class,
         'dsn'      => 'mysql:dbname=test2;host=127.0.0.1',
         'username' => 'root',
-        'password' => 'swoft123456'
+        'password' => 'swoft123456',
+//        'dbSelector' => bean(DbSelector::class)
     ],
-    'db3.pool'          => [
+    'db2.pool'           => [
         'class'    => Pool::class,
-        'database' => bean('db3')
+        'database' => bean('db2'),
     ],
-    'migrationManager'  => [
+    'db3'                => [
+        'class'    => Database::class,
+        'dsn'      => 'mysql:dbname=test2;host=127.0.0.1',
+        'username' => 'root',
+        'password' => 'swoft123456',
+    ],
+    'db3.pool'           => [
+        'class'    => Pool::class,
+        'database' => bean('db3'),
+    ],
+    'migrationManager'   => [
         'migrationPath' => '@database/Migration',
     ],
-    'redis'             => [
+    'redis'              => [
         'class'    => RedisDb::class,
         'host'     => '127.0.0.1',
         'port'     => 6379,
         'database' => 0,
         'option'   => [
-            'prefix' => 'swoft:'
-        ]
+            'prefix' => 'swoft:',
+        ],
     ],
     'user'              => [
         'class'   => ServiceClient::class,
-        'host'    => '127.0.0.1',
-        'port'    => 18307,
+        'host'    => '192.168.2.248',
+        'port'    => 18501,
         'setting' => [
             'timeout'         => 0.5,
             'connect_timeout' => 1.0,
@@ -131,29 +132,30 @@ return [
     ],
     'rpcServer'         => [
         'class' => ServiceServer::class,
+        'port'  => 18401,
     ],
     'wsServer'          => [
-        'class'   => WebSocketServer::class,
-        'port'    => 18308,
+        'class'    => WebSocketServer::class,
+        'port'     => 18308,
         'listener' => [
             'rpc' => bean('rpcServer'),
             // 'tcp' => bean('tcpServer'),
         ],
-        'on'      => [
+        'on'       => [
             // Enable http handle
             SwooleEvent::REQUEST => bean(RequestListener::class),
             // Enable task must add task and finish event
-            SwooleEvent::TASK   => bean(TaskListener::class),
-            SwooleEvent::FINISH => bean(FinishListener::class)
+            SwooleEvent::TASK    => bean(TaskListener::class),
+            SwooleEvent::FINISH  => bean(FinishListener::class),
         ],
-        'debug'   => 1,
+        'debug'    => 1,
         // 'debug'   => env('SWOFT_DEBUG', 0),
         /* @see WebSocketServer::$setting */
-        'setting' => [
+        'setting'  => [
             'task_worker_num'       => 6,
             'task_enable_coroutine' => true,
             'worker_num'            => 6,
-            'log_file' => alias('@runtime/swoole.log'),
+            'log_file'              => alias('@runtime/swoole.log'),
         ],
     ],
     // 'wsConnectionManager' => [
@@ -163,9 +165,9 @@ return [
     //     'class' => \Swoft\Session\SwooleStorage::class,
     // ],
     /** @see \Swoft\WebSocket\Server\WsMessageDispatcher */
-    'wsMsgDispatcher' => [
+    'wsMsgDispatcher'   => [
         'middlewares' => [
-            \App\WebSocket\Middleware\GlobalWsMiddleware::class
+            \App\WebSocket\Middleware\GlobalWsMiddleware::class,
         ],
     ],
     /** @see \Swoft\Tcp\Server\TcpServer */
@@ -180,9 +182,9 @@ return [
         // 'openLengthCheck' => true,
     ],
     /** @see \Swoft\Tcp\Server\TcpDispatcher */
-    'tcpDispatcher' => [
+    'tcpDispatcher'     => [
         'middlewares' => [
-            \App\Tcp\Middleware\GlobalTcpMiddleware::class
+            \App\Tcp\Middleware\GlobalTcpMiddleware::class,
         ],
     ],
     'cliRouter'         => [
